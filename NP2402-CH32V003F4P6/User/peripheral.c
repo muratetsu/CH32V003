@@ -1,8 +1,9 @@
 /*
  * peripheral.c
+ * for NP2402
  *
- *  Created on: Sep 16, 2024
- *      Author: main
+ *  Created on: February 2, 2025
+ *      Author: Tetsu Nishimura
  */
 
 #include "debug.h"
@@ -24,7 +25,7 @@ void GPIO_Toggle_INIT(void)
     GPIO_InitTypeDef GPIO_InitStructure = {0};
 
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1;
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
     GPIO_Init(GPIOC, &GPIO_InitStructure);
@@ -33,12 +34,10 @@ void GPIO_Toggle_INIT(void)
 
 // Pin Name Timer
 // 19  PD2  T1CH1
-//  5  PA1  T1CH2
 // 13  PC3  T1CH3
 // 14  PC4  T1CH4
 //  1  PD4  T2CH1ETR
 // 20  PD3  T2CH2
-// 10  PC0  T2CH3
 //  4  PD7  T2CH4, デフォルトの設定はNRSTになっているので使用するにはUser Option Bytesの変更が必要
 void TIM_PWMOut_Init(u16 arr, u16 psc, u16 ccp)
 {
@@ -47,16 +46,10 @@ void TIM_PWMOut_Init(u16 arr, u16 psc, u16 ccp)
     TIM_TimeBaseInitTypeDef TIM_TimeBaseInitStructure={0};
 
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM1 | RCC_APB2Periph_GPIOA | RCC_APB2Periph_GPIOC | RCC_APB2Periph_GPIOD | RCC_APB2Periph_AFIO, ENABLE);
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM1 | RCC_APB2Periph_GPIOC | RCC_APB2Periph_GPIOD | RCC_APB2Periph_AFIO, ENABLE);
 
-    // PA1/T1CH2
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
-    GPIO_Init(GPIOA, &GPIO_InitStructure);
-
-    // PC0/T2CH3, PC3/T1CH3, PC4/T1CH4
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_3 | GPIO_Pin_4;
+    // PC3/T1CH3, PC4/T1CH4
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3 | GPIO_Pin_4;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
     GPIO_Init(GPIOC, &GPIO_InitStructure);
@@ -80,23 +73,19 @@ void TIM_PWMOut_Init(u16 arr, u16 psc, u16 ccp)
     TIM_OCInitStructure.TIM_Pulse = ccp;
     TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;
     TIM_OC1Init(TIM1, &TIM_OCInitStructure);
-    TIM_OC2Init(TIM1, &TIM_OCInitStructure);
     TIM_OC3Init(TIM1, &TIM_OCInitStructure);
     TIM_OC4Init(TIM1, &TIM_OCInitStructure);
     TIM_OC1Init(TIM2, &TIM_OCInitStructure);
     TIM_OC2Init(TIM2, &TIM_OCInitStructure);
-    TIM_OC3Init(TIM2, &TIM_OCInitStructure);
     TIM_OC4Init(TIM2, &TIM_OCInitStructure);
 
     TIM_CtrlPWMOutputs(TIM1, ENABLE);
     TIM_CtrlPWMOutputs(TIM2, ENABLE);
     TIM_OC1PreloadConfig(TIM1, TIM_OCPreload_Disable);
-    TIM_OC2PreloadConfig(TIM1, TIM_OCPreload_Disable);
     TIM_OC3PreloadConfig(TIM1, TIM_OCPreload_Disable);
     TIM_OC4PreloadConfig(TIM1, TIM_OCPreload_Disable);
     TIM_OC1PreloadConfig(TIM2, TIM_OCPreload_Disable);
     TIM_OC2PreloadConfig(TIM2, TIM_OCPreload_Disable);
-    TIM_OC3PreloadConfig(TIM2, TIM_OCPreload_Disable);
     TIM_OC4PreloadConfig(TIM2, TIM_OCPreload_Disable);
 
     TIM_ARRPreloadConfig(TIM1, ENABLE);
@@ -105,7 +94,7 @@ void TIM_PWMOut_Init(u16 arr, u16 psc, u16 ccp)
     TIM_Cmd(TIM2, ENABLE);
 }
 
-
+// ADC is not used in NP2402
 void ADC_Function_Init(void)
 {
     ADC_InitTypeDef  ADC_InitStructure = {0};
@@ -156,10 +145,10 @@ u16 Get_ADC_Val(u8 ch)
 void powerEnbale(bool enable)
 {
     if (enable) {
-        GPIO_WriteBit(GPIOC, GPIO_Pin_1, Bit_SET);      // Enable DCDC
+        GPIO_WriteBit(GPIOC, GPIO_Pin_0, Bit_SET);      // Enable DCDC
     }
     else {
-        GPIO_WriteBit(GPIOC, GPIO_Pin_1, Bit_RESET);    // Disable DCDC
+        GPIO_WriteBit(GPIOC, GPIO_Pin_0, Bit_RESET);    // Disable DCDC
     }
 }
 
@@ -170,24 +159,18 @@ void setPwm(int num, int val)
         TIM_SetCompare1(TIM1, val);
         break;
     case 1:
-        TIM_SetCompare2(TIM1, val);
-        break;
-    case 2:
         TIM_SetCompare3(TIM1, val);
         break;
-    case 3:
+    case 2:
         TIM_SetCompare4(TIM1, val);
         break;
-    case 4:
+    case 3:
         TIM_SetCompare1(TIM2, val);
         break;
-    case 5:
+    case 4:
         TIM_SetCompare2(TIM2, val);
         break;
-    case 6:
-        TIM_SetCompare3(TIM2, val);
-        break;
-    case 7:
+    case 5:
         TIM_SetCompare4(TIM2, val);
         break;
     }
