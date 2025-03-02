@@ -28,7 +28,7 @@
 | PD2 | PWM, LED Control |
 | PD3 | PWM, LED Control |
 | PD4 | PWM, LED Control |
-| PD7 | PWM, LED Control |
+| PD7 | NRST/PWM, LED Control |
 
 ### Schematics
 
