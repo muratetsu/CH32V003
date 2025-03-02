@@ -108,6 +108,7 @@ bool selectRandom(fadeMode_t mode)
     return ret;
 }
 
+// Button state can not be achieve in NP2402
 bool buttonPressed(void)
 {
     if (Get_ADC_Val(ADC_Channel_0) < BUTTON_PRESS_THRESHOLD){
@@ -125,8 +126,8 @@ int main(void)
     Delay_Ms(1000);
     setRandomSeed();
 
-    // Check button status
-    bool btnPressed = buttonPressed();
+    // Button state can not be achieve in NP2402
+    bool btnPressed = false;
 
     // Fade in LEDs
     while (selectRandom(FADEIN) == false) {

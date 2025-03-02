@@ -9,7 +9,7 @@
 #include "debug.h"
 #include "peripheral.h"
 
-#define NP2404
+//#define NP2404
 
 #ifdef NP2404
 #define DCDC_RCC_APBPeriph    RCC_APB2Periph_GPIOD

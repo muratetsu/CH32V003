@@ -94,7 +94,6 @@ void TIM_PWMOut_Init(u16 arr, u16 psc, u16 ccp)
     TIM_Cmd(TIM2, ENABLE);
 }
 
-// ADC is not used in NP2402
 void ADC_Function_Init(void)
 {
     ADC_InitTypeDef  ADC_InitStructure = {0};
