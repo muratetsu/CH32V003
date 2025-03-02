@@ -23,6 +23,7 @@ WCH社のCH32V003シリーズを使ったプロジェクト．
 - MCU: CH32V003F4P6(TSSOP20)
 - Board Size: 60mm x 35mm
 - Number of PWM outputs: 8
+- Button press detection
 - Battery: AA
 
 ### [NP2404/5 - CH32V003A4M6](/NP2405-CH32V003A4M6/)
@@ -30,4 +31,5 @@ WCH社のCH32V003シリーズを使ったプロジェクト．
 - MCU: CH32V003A4M6(SOP16)
 - Board Size: 55mm x 32mm(NP2404), 53mm x 32mm(NP2405)
 - Number of PWM outputs: 6
+- Button press detection
 - Battery: AAA
